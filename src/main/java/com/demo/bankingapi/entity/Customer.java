@@ -1,20 +1,11 @@
-package com.demo.bankingapi.model;
+package com.demo.bankingapi.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -37,7 +28,8 @@ public class Customer {
     @Column(name = "last_name")
     private String lastName;
 
-    @OneToMany(mappedBy = "customer")
+    @OneToMany
+    @JoinColumn(name = "customer_id")
     @ToString.Exclude
     private List<Account> accounts;
 
