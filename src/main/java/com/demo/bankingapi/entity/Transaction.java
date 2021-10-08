@@ -28,7 +28,7 @@ public class Transaction {
     private Account account;
 
     @Temporal(TemporalType.TIME)
-    private Date txDateTime;
+    private Date createdAt;
 
     private String type;
 

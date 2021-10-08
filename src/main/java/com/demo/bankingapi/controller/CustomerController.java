@@ -2,7 +2,6 @@ package com.demo.bankingapi.controller;
 
 import com.demo.bankingapi.domain.CustomerResource;
 import com.demo.bankingapi.service.CustomerService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,21 +16,19 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
-    @GetMapping(path = "/all")
+    @GetMapping
     public List<CustomerResource> getAllCustomers() {
-        // todo
-        return null;
+        return customerService.getAllCustomers();
     }
 
-    @PostMapping(path = "/add")
-    public void addCustomer(@RequestBody CustomerResource customer) {
-        // todo
+    @PostMapping
+    public CustomerResource addCustomer(@RequestBody CustomerResource customer) {
+        return customerService.createCustomer(customer);
     }
 
     @GetMapping(path = "/{customerNumber}")
     public CustomerResource getCustomer(@PathVariable Long customerNumber) {
-        // todo
-        return null;
+        return customerService.getCustomer(customerNumber);
     }
 
     @PutMapping(path = "/{customerNumber}")
@@ -41,6 +38,6 @@ public class CustomerController {
 
     @DeleteMapping(path = "/{customerNumber}")
     public void deleteCustomer(@PathVariable Long customerNumber) {
-        // todo
+        customerService.deleteCustomer(customerNumber);
     }
 }

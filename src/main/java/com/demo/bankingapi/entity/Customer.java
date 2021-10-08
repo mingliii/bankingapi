@@ -7,6 +7,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,6 +23,9 @@ public class Customer {
     @GeneratedValue
     private Long id;
 
+    @Column(name = "customer_number")
+    private Long customerNumber;
+
     @Column(name = "first_name")
     private String firstName;
 
@@ -30,16 +34,19 @@ public class Customer {
 
     @OneToMany
     @JoinColumn(name = "customer_id")
-    @ToString.Exclude
-    private List<Account> accounts;
+    @Builder.Default
+    private List<Account> accounts = new ArrayList<>();
 
+    @Column(name = "status")
     private String status;
 
     @CreationTimestamp
-    private LocalDateTime createdDateTime;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    private LocalDateTime updatedDateTime;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     @Override
     public boolean equals(Object o) {
