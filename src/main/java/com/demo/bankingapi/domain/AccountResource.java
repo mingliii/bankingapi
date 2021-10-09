@@ -3,6 +3,7 @@ package com.demo.bankingapi.domain;
 import lombok.Builder;
 import lombok.Data;
 
+import javax.validation.constraints.NotEmpty;
 import java.math.BigDecimal;
 
 @Data
@@ -11,6 +12,7 @@ public class AccountResource {
 
     private Long accountNumber;
 
+    @NotEmpty
     private Long customerNumber;
 
     private String status;

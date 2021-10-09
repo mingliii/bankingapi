@@ -13,6 +13,8 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 
+// todo test
+
 @Component
 public class CustomerToCustomerResourceConverter implements Converter<Customer, CustomerResource> {
 
@@ -38,7 +40,7 @@ public class CustomerToCustomerResourceConverter implements Converter<Customer, 
                 .name(customer.getName())
                 .email(customer.getEmail())
                 .mobile(customer.getMobile())
-                .status(customer.getStatus())
+                .status(customer.getStatus() != null ? customer.getStatus().name() : null)
                 .accounts(accounts)
                 .build();
     }

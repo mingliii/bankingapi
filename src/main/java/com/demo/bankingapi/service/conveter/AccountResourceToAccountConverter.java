@@ -5,6 +5,8 @@ import com.demo.bankingapi.entity.Account;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
+// todo test
+
 @Component
 public class AccountResourceToAccountConverter implements Converter<AccountResource, Account> {
 
@@ -13,8 +15,8 @@ public class AccountResourceToAccountConverter implements Converter<AccountResou
         return Account.builder()
                 .accountNumber(accountResource.getAccountNumber())
                 .balance(accountResource.getBalance())
-                .status(accountResource.getStatus())
-                .type(accountResource.getType())
+                .status(Account.Status.from(accountResource.getStatus()))
+                .type(Account.Type.from(accountResource.getType()))
                 .build();
 
     }

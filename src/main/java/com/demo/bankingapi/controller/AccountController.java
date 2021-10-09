@@ -1,14 +1,15 @@
 package com.demo.bankingapi.controller;
 
 import com.demo.bankingapi.domain.AccountResource;
+import com.demo.bankingapi.domain.TransferResource;
 import com.demo.bankingapi.service.AccountService;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+import javax.validation.Valid;
+import java.util.List;
+
+@RestController
+@RequestMapping("/accounts")
 public class AccountController {
 
     private final AccountService accountService;
@@ -17,17 +18,29 @@ public class AccountController {
         this.accountService = accountService;
     }
 
+    @GetMapping
+    public List<AccountResource> getAllAccounts() {
+        return accountService.getAllAccounts();
+    }
+
     @GetMapping(path = "/{accountNumber}")
     public AccountResource getByAccountNumber(@PathVariable Long accountNumber) {
-
-        return null;
+        return accountService.getByAccountNumber(accountNumber);
     }
 
-    @PostMapping(path = "/add/{customerNumber}")
-    public void createAccount(@RequestBody AccountResource account) {
-
-        // todo
+    @PostMapping
+    public AccountResource createAccount(@RequestBody AccountResource account) {
+        return accountService.createAccount(account);
     }
 
+    @PostMapping(path = "/{accountNumber}")
+    public AccountResource updateAccount(@RequestBody AccountResource account, @PathVariable Long accountNumber) {
+        account.setAccountNumber(accountNumber);
+        return accountService.updateAccount(account);
+    }
 
+    @PostMapping(path = "/transfer")
+    public void transfer(@Valid @RequestBody TransferResource transferResource) {
+        accountService.transfer(transferResource);
+    }
 }

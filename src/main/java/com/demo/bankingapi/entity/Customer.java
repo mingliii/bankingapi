@@ -8,6 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -27,8 +28,10 @@ public class Customer {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "mobile")
     private String mobile;
 
+    @Column(name = "email")
     private String email;
 
     @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -36,7 +39,8 @@ public class Customer {
     private List<Account> accounts = new ArrayList<>();
 
     @Column(name = "status")
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private Status status = Status.ACTIVE;
 
     @CreationTimestamp
     @Column(name = "created_at")
@@ -70,5 +74,27 @@ public class Customer {
     public void addAccount(Account account) {
         account.setCustomer(this);
         getAccounts().add(account);
+    }
+
+    public void setAccounts(List<Account> accounts) {
+        accounts.forEach(account -> account.setCustomer(this));
+        this.accounts = accounts;
+    }
+
+    public enum Status {
+        ACTIVE,
+        INACTIVE,
+        FROZEN;
+
+        public static Status from(String value) {
+            if (value == null) {
+                return null;
+            }
+
+            return Arrays.stream(Status.values())
+                    .filter(val -> val.name().equalsIgnoreCase(value))
+                    .findFirst()
+                    .orElse(ACTIVE);
+        }
     }
 }

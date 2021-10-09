@@ -1,7 +1,6 @@
 package com.demo.bankingapi.service;
 
 import com.demo.bankingapi.domain.CustomerResource;
-import com.demo.bankingapi.entity.Account;
 import com.demo.bankingapi.entity.Customer;
 import com.demo.bankingapi.repository.CustomerRepository;
 import com.demo.bankingapi.service.exception.NotFoundException;
@@ -15,6 +14,8 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 
+// todo test
+
 @Service
 @Transactional
 public class CustomerService {
@@ -23,14 +24,9 @@ public class CustomerService {
 
     private final ConversionService conversionService;
 
-    private final AccountService accountService;
-
-    public CustomerService(CustomerRepository customerRepository,
-                           ConversionService conversionService,
-                           AccountService accountService) {
+    public CustomerService(CustomerRepository customerRepository, ConversionService conversionService) {
         this.customerRepository = customerRepository;
         this.conversionService = conversionService;
-        this.accountService = accountService;
     }
 
     public List<CustomerResource> getAllCustomers() {
@@ -46,16 +42,11 @@ public class CustomerService {
             return conversionService.convert(customerOptional.get(), CustomerResource.class);
         }
 
-        throw new NotFoundException("Customer: " + customerNumber + " not found");
+        throw new NotFoundException(Customer.class, customerNumber);
     }
 
-    public CustomerResource createCustomer(CustomerResource customerResource, boolean createAccount) {
+    public CustomerResource createCustomer(CustomerResource customerResource) {
         Customer customer = conversionService.convert(customerResource, Customer.class);
-        if (createAccount) {
-            Account account = accountService.createAccount();
-            requireNonNull(customer).addAccount(account);
-        }
-
         customer = customerRepository.save(requireNonNull(customer));
         return conversionService.convert(customer, CustomerResource.class);
     }
@@ -63,7 +54,7 @@ public class CustomerService {
     public CustomerResource updateCustomer(CustomerResource customerResource) {
         Long customerNumber = customerResource.getCustomerNumber();
         if (customerNumber == null) {
-            throw  new RuntimeException("Customer number must be provided");
+            throw new IllegalArgumentException("Customer number must be provided");
         }
 
         Optional<Customer> customerOptional = customerRepository.findByCustomerNumber(customerNumber);
@@ -76,13 +67,13 @@ public class CustomerService {
             customerRepository.save(requireNonNull(customer));
         }
 
-        throw new NotFoundException("Customer: " + customerNumber + " not found");
+        throw new NotFoundException(Customer.class, customerNumber);
     }
 
     public void deleteCustomer(Long customerNumber) {
         Optional<Customer> customerOptional = customerRepository.findById(customerNumber);
         customerOptional.ifPresentOrElse(customerRepository::delete, () -> {
-            throw new NotFoundException("Customer: " + customerNumber + " not found");
+            throw new NotFoundException(Customer.class, customerNumber);
         });
     }
 }

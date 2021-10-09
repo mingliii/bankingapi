@@ -8,6 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Objects;
 
 @Getter
@@ -25,13 +26,15 @@ public class Account {
     private Long accountNumber;
 
     @Column(name = "status")
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private Status status = Status.ACTIVE;
 
     @Column(name = "type")
-    private String type;
+    @Enumerated(EnumType.STRING)
+    private Type type = Type.DEBIT;
 
     @ManyToOne
-    @JoinColumn(name="customer_number")
+    @JoinColumn(name = "customer_number")
     private Customer customer;
 
     @Column(name = "balance")
@@ -57,5 +60,35 @@ public class Account {
     @Override
     public int hashCode() {
         return 0;
+    }
+
+    public enum Status {
+        ACTIVE,
+        INACTIVE,
+        FROZEN;
+
+        public static Status from(String value) {
+            if (value == null) {
+                return null;
+            }
+
+            return Arrays.stream(Status.values())
+                    .filter(val -> val.name().equalsIgnoreCase(value))
+                    .findFirst()
+                    .orElse(ACTIVE);
+        }
+    }
+
+    public enum Type {
+        DEBIT, // default
+        SAVING,
+        CREDIT;
+
+        public static Type from(String value) {
+            return Arrays.stream(Type.values())
+                    .filter(val -> val.name().equalsIgnoreCase(value))
+                    .findFirst()
+                    .orElse(DEBIT);
+        }
     }
 }

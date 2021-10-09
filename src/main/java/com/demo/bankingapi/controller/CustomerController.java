@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
+// todo test mockmvc
+
 @RestController
 @RequestMapping("/customers")
 public class CustomerController {
@@ -22,10 +24,14 @@ public class CustomerController {
         return customerService.getAllCustomers();
     }
 
+    /**
+     * Create customer endpoint that allows customer created with initial accounts.
+     * @param customer customer represented by {@link CustomerResource}
+     * @return created customer represented by {@link CustomerResource}
+     */
     @PostMapping
-    public CustomerResource createCustomer(@Valid @RequestBody CustomerResource customer,
-                                        @RequestParam(required = false, defaultValue = "true") boolean createAccount) {
-        return customerService.createCustomer(customer, createAccount);
+    public CustomerResource createCustomer(@Valid @RequestBody CustomerResource customer) {
+        return customerService.createCustomer(customer);
     }
 
     @GetMapping(path = "/{customerNumber}")
@@ -34,7 +40,8 @@ public class CustomerController {
     }
 
     @PutMapping(path = "/{customerNumber}")
-    public CustomerResource updateCustomer(@RequestBody CustomerResource customer) {
+    public CustomerResource updateCustomer(@RequestBody CustomerResource customer, @PathVariable Long customerNumber) {
+        customer.setCustomerNumber(customerNumber);
         return customerService.updateCustomer(customer);
     }
 

@@ -20,7 +20,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addFormatters(FormatterRegistry registry) {
         registry.addConverter(new AccountResourceToAccountConverter());
         registry.addConverter(new AccountToAccountResourceConverter());
-        registry.addConverter(new CustomerResourceToCustomerConverter());
+        registry.addConverter(new CustomerResourceToCustomerConverter(conversionService));
         registry.addConverter(new CustomerToCustomerResourceConverter(conversionService));
         registry.addConverter(new TransactionToTransactionResourceConverter());
     }

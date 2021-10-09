@@ -7,7 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.util.Arrays;
 import java.util.Objects;
 
 @Getter
@@ -27,21 +27,31 @@ public class Transaction {
     @JoinColumn(name = "account_number")
     private Account account;
 
-    @Temporal(TemporalType.TIME)
-    private Date createdAt;
+    @Column(name = "type")
+    @Enumerated(EnumType.STRING)
+    private Type type;
 
-    private String type;
+    @Column(name = "currency")
+    @Enumerated(EnumType.STRING)
+    private Currency currency;
 
-    private String status;
+    @Column(name = "in_amount")
+    @Builder.Default
+    private BigDecimal inAmount = BigDecimal.ZERO;
 
-    private BigDecimal amount;
+    @Column(name = "out_amount")
+    @Builder.Default
+    private BigDecimal outAmount = BigDecimal.ZERO;
 
+    @Column(name = "balance")
     private BigDecimal balance;
 
+    @Column(name = "description")
     private String description;
 
+    @Column(name = "created_at")
     @CreationTimestamp
-    private LocalDateTime createdDateTime;
+    private LocalDateTime createdAt;
 
     @Override
     public boolean equals(Object o) {
@@ -54,5 +64,18 @@ public class Transaction {
     @Override
     public int hashCode() {
         return 0;
+    }
+
+    public enum Type {
+       // DIRECT_DEBIT, // not support yet
+       // DEBIT_CARD, // not support yet
+        TRANSFER;
+
+        public static Type from(String value) {
+            return Arrays.stream(Type.values())
+                    .filter(val -> val.name().equalsIgnoreCase(value))
+                    .findFirst()
+                    .orElse(TRANSFER);
+        }
     }
 }

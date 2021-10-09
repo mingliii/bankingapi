@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -12,15 +12,19 @@ public class TransactionResource {
 
     private Long accountNumber;
 
-    private Date createdAt;
+    private LocalDateTime createdAt;
 
     private String type;
 
     private String status;
 
-    private BigDecimal amount;
+    private BigDecimal inAmount;
+
+    private BigDecimal outAmount;
 
     private BigDecimal balance;
+
+    private String currency;
 
     private String description;
 }
