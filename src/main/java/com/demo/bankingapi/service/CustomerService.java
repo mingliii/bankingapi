@@ -1,11 +1,14 @@
 package com.demo.bankingapi.service;
 
 import com.demo.bankingapi.domain.CustomerResource;
+import com.demo.bankingapi.entity.Account;
 import com.demo.bankingapi.entity.Customer;
 import com.demo.bankingapi.repository.CustomerRepository;
+import com.demo.bankingapi.service.exception.NotFoundException;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -13,17 +16,21 @@ import java.util.stream.Collectors;
 import static java.util.Objects.requireNonNull;
 
 @Service
+@Transactional
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
 
     private final ConversionService conversionService;
 
-    private AccountService accountService;
+    private final AccountService accountService;
 
-    public CustomerService(CustomerRepository customerRepository, ConversionService conversionService) {
+    public CustomerService(CustomerRepository customerRepository,
+                           ConversionService conversionService,
+                           AccountService accountService) {
         this.customerRepository = customerRepository;
         this.conversionService = conversionService;
+        this.accountService = accountService;
     }
 
     public List<CustomerResource> getAllCustomers() {
@@ -39,23 +46,43 @@ public class CustomerService {
             return conversionService.convert(customerOptional.get(), CustomerResource.class);
         }
 
-        throw new RuntimeException("Customer: " + customerNumber + " not found");
-    }
-
-    public CustomerResource createCustomer(CustomerResource customerResource) {
-        return createCustomer(customerResource, false);
+        throw new NotFoundException("Customer: " + customerNumber + " not found");
     }
 
     public CustomerResource createCustomer(CustomerResource customerResource, boolean createAccount) {
         Customer customer = conversionService.convert(customerResource, Customer.class);
+        if (createAccount) {
+            Account account = accountService.createAccount();
+            requireNonNull(customer).addAccount(account);
+        }
+
         customer = customerRepository.save(requireNonNull(customer));
         return conversionService.convert(customer, CustomerResource.class);
+    }
+
+    public CustomerResource updateCustomer(CustomerResource customerResource) {
+        Long customerNumber = customerResource.getCustomerNumber();
+        if (customerNumber == null) {
+            throw  new RuntimeException("Customer number must be provided");
+        }
+
+        Optional<Customer> customerOptional = customerRepository.findByCustomerNumber(customerNumber);
+
+        if (customerOptional.isPresent()) {
+            Customer customer = customerOptional.get();
+            customer.setEmail(customerResource.getEmail());
+            customer.setMobile(customerResource.getMobile());
+            customer.setName(customerResource.getName());
+            customerRepository.save(requireNonNull(customer));
+        }
+
+        throw new NotFoundException("Customer: " + customerNumber + " not found");
     }
 
     public void deleteCustomer(Long customerNumber) {
         Optional<Customer> customerOptional = customerRepository.findById(customerNumber);
         customerOptional.ifPresentOrElse(customerRepository::delete, () -> {
-            throw new RuntimeException("Customer: " + customerNumber + " not found");
+            throw new NotFoundException("Customer: " + customerNumber + " not found");
         });
     }
 }

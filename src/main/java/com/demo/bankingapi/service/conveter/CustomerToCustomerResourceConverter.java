@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.Objects.requireNonNull;
+
 @Component
 public class CustomerToCustomerResourceConverter implements Converter<Customer, CustomerResource> {
 
@@ -24,13 +26,18 @@ public class CustomerToCustomerResourceConverter implements Converter<Customer, 
     @Override
     public CustomerResource convert(Customer customer) {
         List<AccountResource> accounts = customer.getAccounts().stream()
-                .map(account -> conversionService.convert(account, AccountResource.class))
+                .map(account -> {
+                    AccountResource accountResource = conversionService.convert(account, AccountResource.class);
+                    requireNonNull(accountResource).setCustomerNumber(customer.getCustomerNumber());
+                    return accountResource;
+                })
                 .collect(Collectors.toList());
 
         return CustomerResource.builder()
                 .customerNumber(customer.getCustomerNumber())
-                .firstName(customer.getFirstName())
-                .lastName(customer.getLastName())
+                .name(customer.getName())
+                .email(customer.getEmail())
+                .mobile(customer.getMobile())
                 .status(customer.getStatus())
                 .accounts(accounts)
                 .build();

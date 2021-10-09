@@ -54,4 +54,8 @@ public class AccountService {
         account = accountRepository.save(requireNonNull(account));
         return conversionService.convert(account, AccountResource.class);
     }
+
+    Account createAccount() {
+        return accountRepository.saveAndFlush(Account.builder().build());
+    }
 }

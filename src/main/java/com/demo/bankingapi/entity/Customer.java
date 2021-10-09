@@ -13,27 +13,25 @@ import java.util.Objects;
 
 @Getter
 @Setter
-@ToString
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 public class Customer {
+
     @Id
     @GeneratedValue
-    private Long id;
-
     @Column(name = "customer_number")
     private Long customerNumber;
 
-    @Column(name = "first_name")
-    private String firstName;
+    @Column(name = "name")
+    private String name;
 
-    @Column(name = "last_name")
-    private String lastName;
+    private String mobile;
 
-    @OneToMany
-    @JoinColumn(name = "customer_id")
+    private String email;
+
+    @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Account> accounts = new ArrayList<>();
 
@@ -53,11 +51,24 @@ public class Customer {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         Customer customer = (Customer) o;
-        return id != null && Objects.equals(id, customer.id);
+        return customerNumber != null && Objects.equals(customerNumber, customer.customerNumber);
     }
 
     @Override
     public int hashCode() {
         return 0;
+    }
+
+    public List<Account> getAccounts() {
+        if (accounts == null) {
+            accounts = new ArrayList<>();
+        }
+
+        return accounts;
+    }
+
+    public void addAccount(Account account) {
+        account.setCustomer(this);
+        getAccounts().add(account);
     }
 }

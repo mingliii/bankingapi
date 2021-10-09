@@ -5,10 +5,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -24,28 +21,37 @@ public class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
+    @Column(name = "account_number")
     private Long accountNumber;
 
+    @Column(name = "status")
     private String status;
 
+    @Column(name = "type")
     private String type;
 
-    private BigDecimal balance;
+    @ManyToOne
+    @JoinColumn(name="customer_number")
+    private Customer customer;
+
+    @Column(name = "balance")
+    @Builder.Default
+    private BigDecimal balance = BigDecimal.ZERO;
 
     @CreationTimestamp
-    private LocalDateTime createdDateTime;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    private LocalDateTime updatedDateTime;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         Account account = (Account) o;
-        return id != null && Objects.equals(id, account.id);
+        return accountNumber != null && Objects.equals(accountNumber, account.accountNumber);
     }
 
     @Override

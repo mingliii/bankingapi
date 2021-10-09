@@ -24,7 +24,7 @@ public class AccountController {
     }
 
     @PostMapping(path = "/add/{customerNumber}")
-    public void addAccount(@RequestBody AccountResource account) {
+    public void createAccount(@RequestBody AccountResource account) {
 
         // todo
     }

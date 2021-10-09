@@ -4,6 +4,7 @@ import com.demo.bankingapi.domain.CustomerResource;
 import com.demo.bankingapi.service.CustomerService;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -22,8 +23,9 @@ public class CustomerController {
     }
 
     @PostMapping
-    public CustomerResource addCustomer(@RequestBody CustomerResource customer) {
-        return customerService.createCustomer(customer);
+    public CustomerResource createCustomer(@Valid @RequestBody CustomerResource customer,
+                                        @RequestParam(required = false, defaultValue = "true") boolean createAccount) {
+        return customerService.createCustomer(customer, createAccount);
     }
 
     @GetMapping(path = "/{customerNumber}")
@@ -32,8 +34,8 @@ public class CustomerController {
     }
 
     @PutMapping(path = "/{customerNumber}")
-    public void updateCustomer(@RequestBody CustomerResource customer) {
-        // todo
+    public CustomerResource updateCustomer(@RequestBody CustomerResource customer) {
+        return customerService.updateCustomer(customer);
     }
 
     @DeleteMapping(path = "/{customerNumber}")

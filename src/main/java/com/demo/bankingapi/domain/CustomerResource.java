@@ -3,6 +3,10 @@ package com.demo.bankingapi.domain;
 import lombok.Builder;
 import lombok.Data;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
+import java.util.ArrayList;
 import java.util.List;
 
 @Builder
@@ -11,11 +15,19 @@ public class CustomerResource {
 
     private Long customerNumber;
 
-    private String firstName;
+    @NotEmpty
+    private String name;
 
-    private String lastName;
+    @Email
+    @NotEmpty
+    private String email;
 
-    private List<AccountResource> accounts;
+    @Pattern(regexp = "^([+]\\d{2})?\\d{10,11}$")
+    @NotEmpty
+    private String mobile;
+
+    @Builder.Default
+    private List<AccountResource> accounts = new ArrayList<>();
 
     private String status;
 }

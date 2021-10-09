@@ -10,9 +10,10 @@ public class CustomerResourceToCustomerConverter implements Converter<CustomerRe
     public Customer convert(CustomerResource customerResource) {
         return Customer.builder()
                 .customerNumber(customerResource.getCustomerNumber())
-                .firstName(customerResource.getFirstName())
-                .lastName(customerResource.getLastName())
+                .name(customerResource.getName())
                 .status(customerResource.getStatus())
+                .mobile(customerResource.getMobile())
+                .email(customerResource.getEmail())
                 .build();
     }
 }
