@@ -40,8 +40,10 @@ public class AccountController {
                                                      @RequestParam(required = false, defaultValue = "2099-12-31") LocalDate to,
                                                      @RequestParam(defaultValue = "0") int page,
                                                      @RequestParam(defaultValue = "20") int size,
-                                                     @RequestParam(defaultValue = "true") boolean desc
-    ) {
+                                                     @RequestParam(defaultValue = "true") boolean desc) {
+        if (from.isAfter(to)) {
+            throw new IllegalArgumentException("from date must be before to date");
+        }
 
         return accountService.getTransactions(accountNumber, from.atStartOfDay(), to.plusDays(1).atStartOfDay(), page, size, desc);
     }
