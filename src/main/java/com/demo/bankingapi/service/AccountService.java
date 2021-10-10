@@ -1,6 +1,7 @@
 package com.demo.bankingapi.service;
 
 import com.demo.bankingapi.domain.AccountResource;
+import com.demo.bankingapi.domain.TransactionResource;
 import com.demo.bankingapi.domain.TransferResource;
 import com.demo.bankingapi.entity.Account;
 import com.demo.bankingapi.entity.Currency;
@@ -10,6 +11,9 @@ import com.demo.bankingapi.repository.CustomerRepository;
 import com.demo.bankingapi.service.exception.InsufficientBalanceException;
 import com.demo.bankingapi.service.exception.NotFoundException;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -112,5 +116,11 @@ public class AccountService {
 
         accountRepository.save(from);
         accountRepository.save(to);
+    }
+
+    public List<TransactionResource> getTransactions(Long accountNumber, int page, int size) {
+        return transactionService.getTransactions(accountNumber, PageRequest.of(page, size, Sort.by("createdAt").descending()))
+                .stream().map(transaction -> conversionService.convert(transaction, TransactionResource.class))
+                .collect(Collectors.toList());
     }
 }

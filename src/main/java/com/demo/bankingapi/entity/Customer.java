@@ -21,7 +21,8 @@ import java.util.Objects;
 public class Customer {
 
     @Id
-    @GeneratedValue
+    @SequenceGenerator(name="customer_number_generator", sequenceName = "customer_number_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "customer_number_generator")
     @Column(name = "customer_number")
     private Long customerNumber;
 

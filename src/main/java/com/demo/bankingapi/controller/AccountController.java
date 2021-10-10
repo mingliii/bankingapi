@@ -1,8 +1,11 @@
 package com.demo.bankingapi.controller;
 
 import com.demo.bankingapi.domain.AccountResource;
+import com.demo.bankingapi.domain.TransactionResource;
 import com.demo.bankingapi.domain.TransferResource;
 import com.demo.bankingapi.service.AccountService;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -26,6 +29,13 @@ public class AccountController {
     @GetMapping(path = "/{accountNumber}")
     public AccountResource getByAccountNumber(@PathVariable Long accountNumber) {
         return accountService.getByAccountNumber(accountNumber);
+    }
+
+    @GetMapping(path = "/{accountNumber}/transactions")
+    public List<TransactionResource> getTransactions(@PathVariable Long accountNumber,
+                                               @RequestParam(defaultValue = "0") int page,
+                                               @RequestParam(defaultValue = "20") int size) {
+        return accountService.getTransactions(accountNumber, page, size);
     }
 
     @PostMapping

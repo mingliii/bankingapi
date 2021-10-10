@@ -1,4 +1,4 @@
-insert into customer(customer_number, name) values (1, 'Arisha Barron');
-insert into customer(customer_number, name) values (2, 'Branden Gibson');
-insert into customer(customer_number, name) values (3, 'Rhonda Church');
-insert into customer(customer_number, name) values (4, 'Georgina Hazel');
+insert into customer(customer_number, name, status, email, mobile) values (customer_number_seq.nextval, 'Arisha Barron' , 'ACTIVE', 'test1@test.com', '07830000001');
+insert into customer(customer_number, name, status, email, mobile) values (customer_number_seq.nextval, 'Branden Gibson', 'ACTIVE', 'test2@test.com', '07830000002');
+insert into customer(customer_number, name, status, email, mobile) values (customer_number_seq.nextval, 'Rhonda Church' , 'ACTIVE', 'test3@test.com', '07830000003');
+insert into customer(customer_number, name, status, email, mobile) values (customer_number_seq.nextval, 'Georgina Hazel', 'ACTIVE', 'test4@test.com', '07830000004');
