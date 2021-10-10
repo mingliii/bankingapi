@@ -41,6 +41,11 @@ public class Account {
     @Builder.Default
     private BigDecimal balance = BigDecimal.ZERO;
 
+    @Column(name = "currency")
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private Currency currency = Currency.GBP;
+
     @CreationTimestamp
     @Column(name = "created_at")
     private LocalDateTime createdAt;
