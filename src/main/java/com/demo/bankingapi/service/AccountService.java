@@ -16,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,6 +45,7 @@ public class AccountService {
         this.customerRepository = customerRepository;
     }
 
+    @Transactional(readOnly = true)
     public List<AccountResource> getAllAccounts() {
         return accountRepository.findAll()
                 .stream()
@@ -51,6 +53,7 @@ public class AccountService {
                 .collect(toList());
     }
 
+    @Transactional(readOnly = true)
     public AccountResource getByAccountNumber(Long accountNumber) {
         Optional<Account> accountOptional = accountRepository.findByAccountNumber(accountNumber);
         if (accountOptional.isPresent()) {
@@ -60,6 +63,7 @@ public class AccountService {
         throw new NotFoundException(Account.class, accountNumber);
     }
 
+    @Transactional
     public AccountResource createAccount(AccountResource accountResource) {
         if (accountResource.getCustomerNumber() == null) {
             throw new IllegalArgumentException("Customer number must be provided");
@@ -70,10 +74,10 @@ public class AccountService {
 
         if (customerOptional.isPresent()) {
             Account account = conversionService.convert(accountResource, Account.class);
-            account = accountRepository.save(requireNonNull(account));
             Customer customer = customerOptional.get();
             customer.addAccount(requireNonNull(account));
             customerRepository.save(customer);
+            accountRepository.save(account);
             return conversionService.convert(account, AccountResource.class);
         }
 
@@ -117,13 +121,13 @@ public class AccountService {
         accountRepository.save(to);
     }
 
-    public List<TransactionResource> getTransactions(Long accountNumber, int page, int size, boolean descending) {
+    public List<TransactionResource> getTransactions(Long accountNumber, LocalDateTime from, LocalDateTime to, int page, int size, boolean descending) {
         Sort sortBy = Sort.by("createdAt");
         if (descending) {
             sortBy = sortBy.descending();
         }
 
-        return transactionService.getTransactions(accountNumber, PageRequest.of(page, size, sortBy))
+        return transactionService.getTransactions(accountNumber, from, to, PageRequest.of(page, size, sortBy))
                 .stream().map(transaction -> conversionService.convert(transaction, TransactionResource.class))
                 .collect(toList());
     }

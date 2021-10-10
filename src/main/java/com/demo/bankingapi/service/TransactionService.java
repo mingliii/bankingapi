@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,8 +34,8 @@ public class TransactionService {
     }
 
     @Transactional(readOnly = true)
-    public List<TransactionResource> getTransactions(Long accountNumber, Pageable pageable) {
-        return transactionRepository.findAllByAccount_AccountNumber(accountNumber, pageable)
+    public List<TransactionResource> getTransactions(Long accountNumber, LocalDateTime from, LocalDateTime to, Pageable pageable) {
+        return transactionRepository.findAllByAccount_AccountNumberAndCreatedAtBetween(accountNumber, from, to, pageable)
                 .stream().map(transaction -> conversionService.convert(transaction, TransactionResource.class))
                 .collect(Collectors.toList());
     }

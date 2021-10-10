@@ -9,7 +9,5 @@ import java.time.LocalDateTime;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
-    Page<Transaction> findAllByAccount_AccountNumber(Long accountNumber, Pageable pageable);
-
-    Page<Transaction> findAllByCreatedAtBetweenAndAccount_AccountNumber(LocalDateTime from, LocalDateTime to, Long accountNumber, Pageable pageable);
+    Page<Transaction> findAllByAccount_AccountNumberAndCreatedAtBetween(Long accountNumber, LocalDateTime from, LocalDateTime to, Pageable pageable);
 }
