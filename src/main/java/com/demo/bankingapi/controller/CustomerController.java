@@ -1,6 +1,6 @@
 package com.demo.bankingapi.controller;
 
-import com.demo.bankingapi.domain.CustomerResource;
+import com.demo.bankingapi.resource.CustomerResource;
 import com.demo.bankingapi.service.CustomerService;
 import org.springframework.web.bind.annotation.*;
 

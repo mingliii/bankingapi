@@ -1,8 +1,8 @@
 package com.demo.bankingapi.controller;
 
-import com.demo.bankingapi.domain.AccountResource;
-import com.demo.bankingapi.domain.TransactionResource;
-import com.demo.bankingapi.domain.TransferResource;
+import com.demo.bankingapi.resource.AccountResource;
+import com.demo.bankingapi.resource.TransactionResource;
+import com.demo.bankingapi.resource.TransferResource;
 import com.demo.bankingapi.service.AccountService;
 import org.springframework.web.bind.annotation.*;
 

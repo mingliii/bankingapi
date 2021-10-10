@@ -1,6 +1,6 @@
 package com.demo.bankingapi.service.conveter;
 
-import com.demo.bankingapi.domain.TransactionResource;
+import com.demo.bankingapi.resource.TransactionResource;
 import com.demo.bankingapi.entity.Currency;
 import com.demo.bankingapi.entity.Transaction;
 import org.springframework.core.convert.converter.Converter;

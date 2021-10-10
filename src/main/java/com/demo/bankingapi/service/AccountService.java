@@ -1,8 +1,8 @@
 package com.demo.bankingapi.service;
 
-import com.demo.bankingapi.domain.AccountResource;
-import com.demo.bankingapi.domain.TransactionResource;
-import com.demo.bankingapi.domain.TransferResource;
+import com.demo.bankingapi.resource.AccountResource;
+import com.demo.bankingapi.resource.TransactionResource;
+import com.demo.bankingapi.resource.TransferResource;
 import com.demo.bankingapi.entity.Account;
 import com.demo.bankingapi.entity.Currency;
 import com.demo.bankingapi.entity.Customer;

@@ -1,6 +1,6 @@
 package com.demo.bankingapi.service;
 
-import com.demo.bankingapi.domain.CustomerResource;
+import com.demo.bankingapi.resource.CustomerResource;
 import com.demo.bankingapi.entity.Customer;
 import com.demo.bankingapi.repository.CustomerRepository;
 import com.demo.bankingapi.service.exception.NotFoundException;

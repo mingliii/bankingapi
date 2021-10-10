@@ -1,7 +1,7 @@
 package com.demo.bankingapi.service.conveter;
 
-import com.demo.bankingapi.domain.AccountResource;
-import com.demo.bankingapi.domain.CustomerResource;
+import com.demo.bankingapi.resource.AccountResource;
+import com.demo.bankingapi.resource.CustomerResource;
 import com.demo.bankingapi.entity.Customer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;

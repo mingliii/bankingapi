@@ -1,12 +1,14 @@
 package com.demo.bankingapi.service.conveter;
 
-import com.demo.bankingapi.domain.AccountResource;
+import com.demo.bankingapi.resource.AccountResource;
 import com.demo.bankingapi.entity.Account;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
-// todo test
 
+/**
+ * A convert that converts {@link Account} entity objects to {@link AccountResource} resource objects.
+ */
 @Component
 public class AccountToAccountResourceConverter implements Converter<Account, AccountResource> {
 

@@ -1,4 +1,4 @@
-package com.demo.bankingapi.domain;
+package com.demo.bankingapi.resource;
 
 import lombok.Builder;
 import lombok.Data;
