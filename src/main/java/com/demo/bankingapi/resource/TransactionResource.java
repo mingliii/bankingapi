@@ -14,8 +14,6 @@ public class TransactionResource {
 
     private Long accountNumber;
 
-    private LocalDateTime createdAt;
-
     private String type;
 
     private BigDecimal inAmount;
@@ -27,4 +25,6 @@ public class TransactionResource {
     private String currency;
 
     private String description;
+
+    private LocalDateTime createdAt;
 }

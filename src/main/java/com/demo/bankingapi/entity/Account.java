@@ -34,7 +34,7 @@ public class Account {
     private Type type = Type.DEBIT;
 
     @ManyToOne
-    @JoinColumn(name = "customer_number")
+    @JoinColumn(name = "customer_number", nullable = false)
     private Customer customer;
 
     @Column(name = "balance")
@@ -68,10 +68,6 @@ public class Account {
         FROZEN;
 
         public static Status from(String value) {
-            if (value == null) {
-                return null;
-            }
-
             return Arrays.stream(Status.values())
                     .filter(val -> val.name().equalsIgnoreCase(value))
                     .findFirst()

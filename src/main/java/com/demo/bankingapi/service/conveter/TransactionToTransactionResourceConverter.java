@@ -22,6 +22,7 @@ public class TransactionToTransactionResourceConverter implements Converter<Tran
                 .balance(transaction.getBalance())
                 .currency(transaction.getCurrency() != null ? transaction.getCurrency().name() : null)
                 .description(transaction.getDescription())
+                .createdAt(transaction.getCreatedAt())
                 .build();
     }
 }
