@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-// todo test mockmvc
-
 @RestController
 @RequestMapping("/customers")
 public class CustomerController {

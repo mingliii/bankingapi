@@ -6,8 +6,8 @@ import com.demo.bankingapi.repository.CustomerRepository;
 import com.demo.bankingapi.service.exception.NotFoundException;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 import static java.util.Objects.requireNonNull;
 
 @Service
-@Transactional
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
@@ -27,6 +26,7 @@ public class CustomerService {
         this.conversionService = conversionService;
     }
 
+    @Transactional(readOnly = true)
     public List<CustomerResource> getAllCustomers() {
         return customerRepository.findAll()
                 .stream()
@@ -34,6 +34,7 @@ public class CustomerService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public CustomerResource getCustomer(Long customerNumber) {
         Optional<Customer> customerOptional = customerRepository.findByCustomerNumber(customerNumber);
         if (customerOptional.isPresent()) {
@@ -49,6 +50,7 @@ public class CustomerService {
         return conversionService.convert(customer, CustomerResource.class);
     }
 
+    @Transactional
     public CustomerResource updateCustomer(CustomerResource customerResource) {
         Long customerNumber = customerResource.getCustomerNumber();
         if (customerNumber == null) {
@@ -68,6 +70,7 @@ public class CustomerService {
         throw new NotFoundException(Customer.class, customerNumber);
     }
 
+    @Transactional
     public void deleteCustomer(Long customerNumber) {
         Optional<Customer> customerOptional = customerRepository.findById(customerNumber);
         customerOptional.ifPresentOrElse(customerRepository::delete, () -> {
