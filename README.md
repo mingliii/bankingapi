@@ -13,11 +13,11 @@ While modern banks have evolved to serve a plethora of functions, at their core,
   - Framework: **Spring**
 - There should be API routes that allow them to:
   - Create a new bank account for a customer, with an initial deposit amount. A
-    single customer may have multiple bank accounts.
+    single customer may have multiple bank accounts.✅
   - Transfer amounts between any two accounts, including those owned by
-    different customers.
-  - Retrieve balances for a given account.
-  - Retrieve transfer history for a given account.
+    different customers.✅
+  - Retrieve balances for a given account. ✅
+  - Retrieve transfer history for a given account.✅
 - Write tests for your business logic
 
 Feel free to pre-populate your customers with the following:
