@@ -1,7 +1,9 @@
 package com.demo.bankingapi.resource;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -9,7 +11,9 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 @Data
-@RequiredArgsConstructor
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class TransferResource {
 
     @NotNull

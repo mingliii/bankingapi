@@ -18,6 +18,7 @@ public class AccountToAccountResourceConverter implements Converter<Account, Acc
                 .accountNumber(account.getAccountNumber())
                 .customerNumber(account.getCustomer().getCustomerNumber())
                 .balance(account.getBalance())
+                .currency(account.getCurrency())
                 .status(account.getStatus() != null ? account.getStatus().name() : null)
                 .type(account.getType() != null ? account.getType().name() : null)
                 .build();

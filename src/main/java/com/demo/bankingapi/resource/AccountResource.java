@@ -1,5 +1,6 @@
 package com.demo.bankingapi.resource;
 
+import com.demo.bankingapi.entity.Currency;
 import lombok.Builder;
 import lombok.Data;
 
@@ -19,5 +20,10 @@ public class AccountResource {
 
     private String type;
 
+    private Currency currency;
+
+    /**
+     * When used to create an account, the balance means the initial deposit into the account.
+     */
     private BigDecimal balance;
 }

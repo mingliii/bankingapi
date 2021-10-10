@@ -1,5 +1,6 @@
 package com.demo.bankingapi.service.conveter;
 
+import com.demo.bankingapi.entity.Currency;
 import com.demo.bankingapi.resource.AccountResource;
 import com.demo.bankingapi.entity.Account;
 import org.springframework.core.convert.converter.Converter;
@@ -17,6 +18,7 @@ public class AccountResourceToAccountConverter implements Converter<AccountResou
                 .accountNumber(accountResource.getAccountNumber())
                 .balance(accountResource.getBalance())
                 .status(Account.Status.from(accountResource.getStatus()))
+                .currency(Currency.from(accountResource.getStatus()))
                 .type(Account.Type.from(accountResource.getType()))
                 .build();
     }

@@ -14,8 +14,6 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
 
-// todo test
-
 @Service
 @Transactional
 public class CustomerService {

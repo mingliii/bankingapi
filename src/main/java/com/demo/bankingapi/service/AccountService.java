@@ -1,13 +1,13 @@
 package com.demo.bankingapi.service;
 
-import com.demo.bankingapi.resource.AccountResource;
-import com.demo.bankingapi.resource.TransactionResource;
-import com.demo.bankingapi.resource.TransferResource;
 import com.demo.bankingapi.entity.Account;
 import com.demo.bankingapi.entity.Currency;
 import com.demo.bankingapi.entity.Customer;
 import com.demo.bankingapi.repository.AccountRepository;
 import com.demo.bankingapi.repository.CustomerRepository;
+import com.demo.bankingapi.resource.AccountResource;
+import com.demo.bankingapi.resource.TransactionResource;
+import com.demo.bankingapi.resource.TransferResource;
 import com.demo.bankingapi.service.exception.InsufficientBalanceException;
 import com.demo.bankingapi.service.exception.NotFoundException;
 import org.springframework.core.convert.ConversionService;
@@ -23,7 +23,6 @@ import java.util.Optional;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
-// todo test
 @Service
 public class AccountService {
 
@@ -94,12 +93,11 @@ public class AccountService {
     @Transactional
     public void transfer(TransferResource transferResource) {
         Optional<Account> fromOptional = accountRepository.findByAccountNumber(transferResource.getFromAccountNumber());
-        Optional<Account> toOptional = accountRepository.findByAccountNumber(transferResource.getToAccountNumber());
-
         if (fromOptional.isEmpty()) {
             throw new NotFoundException(Account.class, transferResource.getFromAccountNumber());
         }
 
+        Optional<Account> toOptional = accountRepository.findByAccountNumber(transferResource.getToAccountNumber());
         if (toOptional.isEmpty()) {
             throw new NotFoundException(Account.class, transferResource.getToAccountNumber());
         }
@@ -127,8 +125,6 @@ public class AccountService {
             sortBy = sortBy.descending();
         }
 
-        return transactionService.getTransactions(accountNumber, from, to, PageRequest.of(page, size, sortBy))
-                .stream().map(transaction -> conversionService.convert(transaction, TransactionResource.class))
-                .collect(toList());
+        return transactionService.getTransactions(accountNumber, from, to, PageRequest.of(page, size, sortBy));
     }
 }
