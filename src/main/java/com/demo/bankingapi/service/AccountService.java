@@ -18,9 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toList;
 
 // todo test
 @Service
@@ -48,7 +48,7 @@ public class AccountService {
         return accountRepository.findAll()
                 .stream()
                 .map(account -> conversionService.convert(account, AccountResource.class))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     public AccountResource getByAccountNumber(Long accountNumber) {
@@ -125,6 +125,6 @@ public class AccountService {
 
         return transactionService.getTransactions(accountNumber, PageRequest.of(page, size, sortBy))
                 .stream().map(transaction -> conversionService.convert(transaction, TransactionResource.class))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 }

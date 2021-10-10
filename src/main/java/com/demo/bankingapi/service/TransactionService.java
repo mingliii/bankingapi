@@ -14,7 +14,9 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.demo.bankingapi.entity.Transaction.builder;
 import static com.demo.bankingapi.entity.Transaction.Type.TRANSFER;
+import static java.lang.String.format;
 
 // todo test
 
@@ -40,21 +42,21 @@ public class TransactionService {
     @Transactional
     public void createTransactions(Account from, Account to, BigDecimal amount, Currency currency) {
 
-        Transaction fromTransaction = Transaction.builder()
+        Transaction fromTransaction = builder()
                 .account(from)
                 .balance(from.getBalance())
                 .outAmount(amount)
                 .currency(currency)
-                .description(String.format("A transfer(%s %s) made to Account(%s)", currency.getSymbol(), amount, to.getAccountNumber()))
+                .description(format("A transfer(%s%s) made to Account(%s)", currency.getSymbol(), amount, to.getAccountNumber()))
                 .type(TRANSFER)
                 .build();
 
-        Transaction toTransaction = Transaction.builder()
+        Transaction toTransaction = builder()
                 .account(to)
                 .balance(to.getBalance())
                 .inAmount(amount)
                 .currency(currency)
-                .description(String.format("A transfer(%s %s) received from Account(%s)", currency.getSymbol(), amount, from.getAccountNumber()))
+                .description(format("A transfer(%s%s) received from Account(%s)", currency.getSymbol(), amount, from.getAccountNumber()))
                 .type(TRANSFER)
                 .build();
 

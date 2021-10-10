@@ -10,13 +10,13 @@ import java.time.LocalDateTime;
 @Builder
 public class TransactionResource {
 
+    private Long id;
+
     private Long accountNumber;
 
     private LocalDateTime createdAt;
 
     private String type;
-
-    private String status;
 
     private BigDecimal inAmount;
 

@@ -13,6 +13,7 @@ public class TransactionToTransactionResourceConverter implements Converter<Tran
     @Override
     public TransactionResource convert(Transaction transaction) {
         return TransactionResource.builder()
+                .id(transaction.getId())
                 .accountNumber(transaction.getAccount().getAccountNumber())
                 .createdAt(transaction.getCreatedAt())
                 .type(transaction.getType() != null ? transaction.getType().name() : null)
