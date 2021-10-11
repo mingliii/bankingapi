@@ -37,11 +37,11 @@ public class CustomerService {
     @Transactional(readOnly = true)
     public CustomerResource getCustomer(Long customerNumber) {
         Optional<Customer> customerOptional = customerRepository.findByCustomerNumber(customerNumber);
-        if (customerOptional.isPresent()) {
-            return conversionService.convert(customerOptional.get(), CustomerResource.class);
+        if (customerOptional.isEmpty()) {
+            throw new NotFoundException(Customer.class, customerNumber);
         }
 
-        throw new NotFoundException(Customer.class, customerNumber);
+        return conversionService.convert(customerOptional.get(), CustomerResource.class);
     }
 
     public CustomerResource createCustomer(CustomerResource customerResource) {
@@ -59,20 +59,22 @@ public class CustomerService {
 
         Optional<Customer> customerOptional = customerRepository.findByCustomerNumber(customerNumber);
 
-        if (customerOptional.isPresent()) {
-            Customer customer = customerOptional.get();
-            customer.setEmail(customerResource.getEmail());
-            customer.setMobile(customerResource.getMobile());
-            customer.setName(customerResource.getName());
-            customerRepository.save(requireNonNull(customer));
+        if (customerOptional.isEmpty()) {
+            throw new NotFoundException(Customer.class, customerNumber);
         }
 
-        throw new NotFoundException(Customer.class, customerNumber);
+        Customer customer = customerOptional.get();
+        customer.setEmail(customerResource.getEmail());
+        customer.setMobile(customerResource.getMobile());
+        customer.setName(customerResource.getName());
+        customer = customerRepository.save(requireNonNull(customer));
+        return conversionService.convert(customer, CustomerResource.class);
+
     }
 
     @Transactional
     public void deleteCustomer(Long customerNumber) {
-        Optional<Customer> customerOptional = customerRepository.findById(customerNumber);
+        Optional<Customer> customerOptional = customerRepository.findByCustomerNumber(customerNumber);
         customerOptional.ifPresentOrElse(customerRepository::delete, () -> {
             throw new NotFoundException(Customer.class, customerNumber);
         });
