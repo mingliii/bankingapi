@@ -23,7 +23,6 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -54,7 +53,7 @@ public abstract class AbstractBankApiIT {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(accountResource)))
                 .andExpect(status().isCreated())
-                .andDo(print())
+//                .andDo(print())
                 .andReturn()
                 .getResponse().getContentAsString();
         return objectMapper.readValue(primaryAccountString, AccountResource.class);
@@ -64,7 +63,7 @@ public abstract class AbstractBankApiIT {
     protected AccountResource retrieveAccount(Long accountNumber) {
         String accountString = mockMvc.perform(get("/accounts/" + accountNumber))
                 .andExpect(status().isOk())
-                .andDo(print())
+//                .andDo(print())
                 .andReturn()
                 .getResponse().getContentAsString();
         return objectMapper.readValue(accountString, AccountResource.class);
@@ -74,7 +73,7 @@ public abstract class AbstractBankApiIT {
     protected List<TransactionResource> retrieveTransactions(Long accountNumber, String type) {
         String primaryTransactionString = mockMvc.perform(get("/accounts/" + accountNumber + "/transactions").queryParam("type", type))
                 .andExpect(status().isOk())
-                .andDo(print())
+//                .andDo(print())
                 .andReturn()
                 .getResponse().getContentAsString();
         return asList(objectMapper.readValue(primaryTransactionString, TransactionResource[].class));
@@ -89,9 +88,10 @@ public abstract class AbstractBankApiIT {
                 .build();
 
         mockMvc.perform(post("/accounts/transfer")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(transferResource)))
-                .andDo(print());
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(transferResource)))
+//                .andDo(print())
+        ;
     }
 
     protected AccountResource createAccountResource(BigDecimal amount, Long customerNumber) {
