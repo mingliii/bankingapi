@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.demo.bankingapi.entity.Transaction.builder;
 import static com.demo.bankingapi.entity.Transaction.Type.TRANSFER;
 import static java.lang.String.format;
 
@@ -43,7 +42,7 @@ public class TransactionService {
     @Transactional
     public void createTransactions(Account from, Account to, BigDecimal amount, Currency currency) {
 
-        Transaction fromTransaction = builder()
+        Transaction fromTransaction = Transaction.builder()
                 .account(from)
                 .balance(from.getBalance())
                 .outAmount(amount)
@@ -52,7 +51,7 @@ public class TransactionService {
                 .type(TRANSFER)
                 .build();
 
-        Transaction toTransaction = builder()
+        Transaction toTransaction = Transaction.builder()
                 .account(to)
                 .balance(to.getBalance())
                 .inAmount(amount)

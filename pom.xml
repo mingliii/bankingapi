@@ -8,7 +8,7 @@
         <version>2.5.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.demo</groupId>
+    <groupId>com.demo.bankingapi</groupId>
     <artifactId>banking-api</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>banking-api</name>
