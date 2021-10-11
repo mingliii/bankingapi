@@ -21,7 +21,8 @@ import java.util.Objects;
 public class Account {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @SequenceGenerator(name="account_number_generator", sequenceName = "account_number_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "account_number_generator")
     @Column(name = "account_number")
     private Long accountNumber;
 
