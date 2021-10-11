@@ -19,8 +19,6 @@ import static com.demo.bankingapi.entity.Transaction.Type.DEPOSIT;
 import static com.demo.bankingapi.entity.Transaction.Type.TRANSFER;
 import static java.lang.String.format;
 
-// todo test
-
 @Service
 public class TransactionService {
 
@@ -34,8 +32,8 @@ public class TransactionService {
     }
 
     @Transactional(readOnly = true)
-    public List<TransactionResource> getTransactions(Long accountNumber, LocalDateTime from, LocalDateTime to, Pageable pageable) {
-        return transactionRepository.findAllByAccount_AccountNumberAndCreatedAtBetween(accountNumber, from, to, pageable)
+    public List<TransactionResource> getTransactions(Long accountNumber, Transaction.Type type, LocalDateTime from, LocalDateTime to, Pageable pageable) {
+        return transactionRepository.findAllByAccount_AccountNumberAndTypeAndCreatedAtBetween(accountNumber, type, from, to, pageable)
                 .stream().map(transaction -> conversionService.convert(transaction, TransactionResource.class))
                 .collect(Collectors.toList());
     }

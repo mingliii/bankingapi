@@ -12,4 +12,5 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     List<Transaction> findAllByAccount_AccountNumber(Long accountNumber);
     Page<Transaction> findAllByAccount_AccountNumberAndCreatedAtBetween(Long accountNumber, LocalDateTime from, LocalDateTime to, Pageable pageable);
+    Page<Transaction> findAllByAccount_AccountNumberAndTypeAndCreatedAtBetween(Long accountNumber, Transaction.Type type, LocalDateTime from, LocalDateTime to, Pageable pageable);
 }

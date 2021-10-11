@@ -3,6 +3,7 @@ package com.demo.bankingapi.service;
 import com.demo.bankingapi.entity.Account;
 import com.demo.bankingapi.entity.Currency;
 import com.demo.bankingapi.entity.Customer;
+import com.demo.bankingapi.entity.Transaction;
 import com.demo.bankingapi.repository.AccountRepository;
 import com.demo.bankingapi.repository.CustomerRepository;
 import com.demo.bankingapi.resource.AccountResource;
@@ -281,15 +282,16 @@ class AccountServiceTest {
         Long accountNumber = 123L;
         LocalDateTime from = LocalDate.parse("2021-01-01", DateTimeFormatter.ISO_DATE).atStartOfDay();
         LocalDateTime to = LocalDate.parse("2021-12-01", DateTimeFormatter.ISO_DATE).atStartOfDay();
+        String type = "TRANSFER";
         int page = 10;
         int size = 20;
         boolean descending = true;
 
         // when
-        accountService.getTransactions(accountNumber, from, to, page, size, descending);
+        accountService.getTransactions(accountNumber, type, from, to, page, size, descending);
 
         // then
-        verify(transactionService).getTransactions(eq(accountNumber), eq(from), eq(to), eq(PageRequest.of(page, size, Sort.by("createdAt").descending())));
+        verify(transactionService).getTransactions(eq(accountNumber), eq(Transaction.Type.TRANSFER), eq(from), eq(to), eq(PageRequest.of(page, size, Sort.by("createdAt").descending())));
 
     }
 
@@ -300,20 +302,21 @@ class AccountServiceTest {
         Long accountNumber = 123L;
         LocalDateTime from = LocalDate.parse("2021-01-01", DateTimeFormatter.ISO_DATE).atStartOfDay();
         LocalDateTime to = LocalDate.parse("2021-12-01", DateTimeFormatter.ISO_DATE).atStartOfDay();
+        String type = "TRANSFER";
         int page = 10;
         int size = 20;
         boolean descending = false;
 
         Pageable pageRequest = PageRequest.of(page, size, Sort.by("createdAt").ascending());
         List<TransactionResource> transactionResources = generator.objects(TransactionResource.class, 5).collect(Collectors.toList());
-        when(transactionService.getTransactions(eq(accountNumber), eq(from), eq(to), eq(pageRequest)))
+        when(transactionService.getTransactions(eq(accountNumber), eq(Transaction.Type.TRANSFER), eq(from), eq(to), eq(pageRequest)))
                 .thenReturn(transactionResources);
 
         // when
-        List<TransactionResource> resources = accountService.getTransactions(accountNumber, from, to, page, size, descending);
+        List<TransactionResource> resources = accountService.getTransactions(accountNumber, type, from, to, page, size, descending);
         assertEquals(transactionResources, resources);
 
         // then
-        verify(transactionService).getTransactions(eq(accountNumber), eq(from), eq(to), eq(PageRequest.of(page, size, Sort.by("createdAt").ascending())));
+        verify(transactionService).getTransactions(eq(accountNumber), eq(Transaction.Type.TRANSFER), eq(from), eq(to), eq(PageRequest.of(page, size, Sort.by("createdAt").ascending())));
     }
 }

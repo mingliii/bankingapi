@@ -3,6 +3,7 @@ package com.demo.bankingapi.service;
 import com.demo.bankingapi.entity.Account;
 import com.demo.bankingapi.entity.Currency;
 import com.demo.bankingapi.entity.Customer;
+import com.demo.bankingapi.entity.Transaction;
 import com.demo.bankingapi.repository.AccountRepository;
 import com.demo.bankingapi.repository.CustomerRepository;
 import com.demo.bankingapi.resource.AccountResource;
@@ -124,12 +125,12 @@ public class AccountService {
         accountRepository.save(to);
     }
 
-    public List<TransactionResource> getTransactions(Long accountNumber, LocalDateTime from, LocalDateTime to, int page, int size, boolean descending) {
+    public List<TransactionResource> getTransactions(Long accountNumber, String type, LocalDateTime from, LocalDateTime to, int page, int size, boolean descending) {
         Sort sortBy = Sort.by("createdAt");
         if (descending) {
             sortBy = sortBy.descending();
         }
 
-        return transactionService.getTransactions(accountNumber, from, to, PageRequest.of(page, size, sortBy));
+        return transactionService.getTransactions(accountNumber, Transaction.Type.from(type), from, to, PageRequest.of(page, size, sortBy));
     }
 }

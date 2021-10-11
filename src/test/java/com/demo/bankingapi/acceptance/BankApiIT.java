@@ -1,56 +1,28 @@
 package com.demo.bankingapi.acceptance;
 
-import com.demo.bankingapi.entity.Currency;
 import com.demo.bankingapi.entity.Customer;
-import com.demo.bankingapi.repository.AccountRepository;
-import com.demo.bankingapi.repository.CustomerRepository;
-import com.demo.bankingapi.repository.TransactionRepository;
 import com.demo.bankingapi.resource.AccountResource;
 import com.demo.bankingapi.resource.TransactionResource;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toUnmodifiableList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
 @Rollback
-class BankApiIT {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private AccountRepository accountRepository;
-
-    @Autowired
-    private CustomerRepository customerRepository;
-
-    @Autowired
-    private TransactionRepository transactionRepository;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+class BankApiIT extends AbstractBankApiIT {
 
     @BeforeEach
     public void setUp() {
@@ -62,63 +34,23 @@ class BankApiIT {
 
     @SneakyThrows
     @Test
-    void testCreateAccountsForCustomer() {
+    void testCreateAccountsForSameCustomer() {
         // given
-        Long customerId = 1L;
-
-        AccountResource primaryAccount = AccountResource.builder()
-                .balance(new BigDecimal("100.00"))
-                .currency(Currency.GBP)
-                .customerNumber(customerId)
-                .status("ACTIVE")
-                .type("DEBIT").build();
-
-        AccountResource secondaryAccount = AccountResource.builder()
-                .balance(new BigDecimal("300.00"))
-                .currency(Currency.GBP)
-                .customerNumber(customerId)
-                .status("ACTIVE")
-                .type("DEBIT").build();
+        Long customerNumber = 1L;
 
         // when
         // create 1st account
-        String primaryAccountString = mockMvc.perform(post("/accounts")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(primaryAccount)))
-                .andExpect(status().isCreated())
-                .andDo(print())
-                .andReturn()
-                .getResponse().getContentAsString();
-        AccountResource primaryAccountCreated = objectMapper.readValue(primaryAccountString, AccountResource.class);
+        AccountResource primaryAccountCreated = createAccount(createAccountResource(new BigDecimal("100.00"), customerNumber));
+        // create 2nd account
+        AccountResource secondaryAccountCreated = createAccount(createAccountResource(new BigDecimal("300.00"), customerNumber));
 
         // retrieve 1st transaction
-        String primaryTransactionString = mockMvc.perform(get("/accounts/" + primaryAccountCreated.getAccountNumber() + "/transactions"))
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andReturn()
-                .getResponse().getContentAsString();
-        List<TransactionResource> primaryTransactions = asList(objectMapper.readValue(primaryTransactionString, TransactionResource[].class));
-
-        // create 2nd account
-        String secondaryAccountString = mockMvc.perform(post("/accounts")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(secondaryAccount)))
-                .andExpect(status().isCreated())
-                .andDo(print())
-                .andReturn()
-                .getResponse().getContentAsString();
-        AccountResource secondaryAccountCreated = objectMapper.readValue(secondaryAccountString, AccountResource.class);
-
+        List<TransactionResource> primaryTransactions = retrieveTransactions(primaryAccountCreated.getAccountNumber(), "DEPOSIT");
         // retrieve 2nd transaction
-        String secondaryTransactionString = mockMvc.perform(get("/accounts/" + secondaryAccountCreated.getAccountNumber() + "/transactions"))
-                .andExpect(status().isOk())
-                .andDo(print())
-                .andReturn()
-                .getResponse().getContentAsString();
-        List<TransactionResource> secondaryTransactions = asList(objectMapper.readValue(secondaryTransactionString, TransactionResource[].class));
+        List<TransactionResource> secondaryTransactions = retrieveTransactions(secondaryAccountCreated.getAccountNumber(), "DEPOSIT");
 
         // then
-        assertEquals(2, accountRepository.findByCustomer_CustomerNumber(customerId).size());
+        assertEquals(2, accountRepository.findByCustomer_CustomerNumber(customerNumber).size());
 
         assertEquals(new BigDecimal("100.00"), primaryAccountCreated.getBalance());
         assertEquals(1, primaryTransactions.size());
@@ -135,12 +67,101 @@ class BankApiIT {
         assertEquals(new BigDecimal("300.00"), secondaryTransactions.get(0).getBalance());
     }
 
+    @SneakyThrows
+    @Test
+    void testCreateAccountsForDifferentCustomers() {
+        // given
+        Long firstCustomer = 1L;
+        Long secondCustomer = 2L;
+
+        // when
+        // create 1st account
+        AccountResource firstAccount = createAccount(createAccountResource(new BigDecimal("100.00"), firstCustomer));
+        // create 2nd account
+        AccountResource secondAccount = createAccount(createAccountResource(new BigDecimal("300.00"), secondCustomer));
+
+        // retrieve 1st transaction
+        List<TransactionResource> firstTransactions = retrieveTransactions(firstAccount.getAccountNumber(), "DEPOSIT");
+        // retrieve 2nd transaction
+        List<TransactionResource> secondTransactions = retrieveTransactions(secondAccount.getAccountNumber(), "DEPOSIT");
+
+        // then
+        assertEquals(1, accountRepository.findByCustomer_CustomerNumber(firstCustomer).size());
+        assertEquals(1, accountRepository.findByCustomer_CustomerNumber(secondCustomer).size());
+
+        assertEquals(new BigDecimal("100.00"), firstAccount.getBalance());
+        assertEquals(1, firstTransactions.size());
+        assertEquals("DEPOSIT", firstTransactions.get(0).getType());
+        assertEquals(new BigDecimal("100.00"), firstTransactions.get(0).getInAmount());
+        assertEquals(BigDecimal.ZERO, firstTransactions.get(0).getOutAmount());
+        assertEquals(new BigDecimal("100.00"), firstTransactions.get(0).getBalance());
+
+        assertEquals(new BigDecimal("300.00"), secondAccount.getBalance());
+        assertEquals(1, secondTransactions.size());
+        assertEquals("DEPOSIT", secondTransactions.get(0).getType());
+        assertEquals(new BigDecimal("300.00"), secondTransactions.get(0).getInAmount());
+        assertEquals(BigDecimal.ZERO, secondTransactions.get(0).getOutAmount());
+        assertEquals(new BigDecimal("300.00"), secondTransactions.get(0).getBalance());
+    }
+
+    @SneakyThrows
     @Test
     void testTransfer() {
+        // given
+        // create 1st account
+        AccountResource fromAccount = createAccount(createAccountResource(new BigDecimal("100.00"), 1L));
+        // create 2nd account
+        AccountResource toAccount = createAccount(createAccountResource(new BigDecimal("300.00"), 2L));
+
+        // when
+        transfer(fromAccount.getAccountNumber(), toAccount.getAccountNumber(), new BigDecimal("50.99"));
+        transfer(fromAccount.getAccountNumber(), toAccount.getAccountNumber(), new BigDecimal("10.99"));
+
+        List<TransactionResource> fromTfsTransactions = retrieveTransactions(fromAccount.getAccountNumber(), "TRANSFER");
+        List<TransactionResource> toTfsTransactions = retrieveTransactions(toAccount.getAccountNumber(), "TRANSFER");
+
+        fromAccount = retrieveAccount(fromAccount.getAccountNumber());
+        toAccount = retrieveAccount(toAccount.getAccountNumber());
+
+        // then
+        assertEquals(new BigDecimal("38.02"), fromAccount.getBalance());
+        assertEquals(new BigDecimal("361.98"), toAccount.getBalance());
+
+        assertEquals(2, fromTfsTransactions.size());
+        assertEquals(new BigDecimal("38.02"), fromTfsTransactions.get(0).getBalance());
+        assertEquals(new BigDecimal("49.01"), fromTfsTransactions.get(1).getBalance());
+
+        assertEquals(2, toTfsTransactions.size());
+        assertEquals(new BigDecimal("361.98"), toTfsTransactions.get(0).getBalance());
+        assertEquals(new BigDecimal("350.99"), toTfsTransactions.get(1).getBalance());
     }
 
     @Test
     void testTransferWithInsufficientBalance() {
+// given
+        // create 1st account
+        AccountResource fromAccount = createAccount(createAccountResource(new BigDecimal("100.00"), 1L));
+        // create 2nd account
+        AccountResource toAccount = createAccount(createAccountResource(new BigDecimal("300.00"), 2L));
 
+        // when
+        transfer(fromAccount.getAccountNumber(), toAccount.getAccountNumber(), new BigDecimal("50.99"));
+        transfer(fromAccount.getAccountNumber(), toAccount.getAccountNumber(), new BigDecimal("50.00"));
+
+        List<TransactionResource> fromTfsTransactions = retrieveTransactions(fromAccount.getAccountNumber(), "TRANSFER");
+        List<TransactionResource> toTfsTransactions = retrieveTransactions(toAccount.getAccountNumber(), "TRANSFER");
+
+        fromAccount = retrieveAccount(fromAccount.getAccountNumber());
+        toAccount = retrieveAccount(toAccount.getAccountNumber());
+
+        // then
+        assertEquals(new BigDecimal("49.01"), fromAccount.getBalance());
+        assertEquals(new BigDecimal("350.99"), toAccount.getBalance());
+
+        assertEquals(1, fromTfsTransactions.size());
+        assertEquals(new BigDecimal("49.01"), fromTfsTransactions.get(0).getBalance());
+
+        assertEquals(1, toTfsTransactions.size());
+        assertEquals(new BigDecimal("350.99"), toTfsTransactions.get(0).getBalance());
     }
 }
