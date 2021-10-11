@@ -6,6 +6,8 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import static java.math.BigDecimal.ZERO;
+
 @Data
 @Builder
 public class TransactionResource {
@@ -16,11 +18,14 @@ public class TransactionResource {
 
     private String type;
 
-    private BigDecimal inAmount;
+    @Builder.Default
+    private BigDecimal inAmount = ZERO;
 
-    private BigDecimal outAmount;
+    @Builder.Default
+    private BigDecimal outAmount = ZERO;
 
-    private BigDecimal balance;
+    @Builder.Default
+    private BigDecimal balance = ZERO;
 
     private String currency;
 
