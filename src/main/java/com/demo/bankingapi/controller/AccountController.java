@@ -5,14 +5,13 @@ import com.demo.bankingapi.resource.TransactionResource;
 import com.demo.bankingapi.resource.TransferResource;
 import com.demo.bankingapi.service.AccountService;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
-
-// todo test
 
 @RestController
 @RequestMapping("/accounts")
@@ -51,6 +50,7 @@ public class AccountController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public AccountResource createAccount(@RequestBody AccountResource account) {
         return accountService.createAccount(account);
     }
@@ -62,6 +62,7 @@ public class AccountController {
     }
 
     @PostMapping(path = "/transfer")
+    @ResponseStatus(HttpStatus.CREATED)
     public void transfer(@Valid @RequestBody TransferResource transferResource) {
         if (Objects.equals(transferResource.getFromAccountNumber(), transferResource.getToAccountNumber())) {
             throw new IllegalArgumentException("Transfer accounts must be different");

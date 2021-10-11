@@ -16,6 +16,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -75,8 +76,12 @@ public class AccountService {
             Account account = conversionService.convert(accountResource, Account.class);
             Customer customer = customerOptional.get();
             customer.addAccount(requireNonNull(account));
-            customerRepository.save(customer);
             accountRepository.save(account);
+
+            if (account.getBalance().compareTo(BigDecimal.ZERO) > 0) {
+                transactionService.createDepositTransactions(account, accountResource.getBalance(), accountResource.getCurrency());
+            }
+
             return conversionService.convert(account, AccountResource.class);
         }
 
@@ -113,7 +118,7 @@ public class AccountService {
         to.setBalance(to.getBalance().add(transferResource.getAmount()));
 
         Currency currency = Currency.from(transferResource.getCurrency());
-        transactionService.createTransactions(from, to, transferResource.getAmount(), currency);
+        transactionService.createTransferTransactions(from, to, transferResource.getAmount(), currency);
 
         accountRepository.save(from);
         accountRepository.save(to);

@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.demo.bankingapi.entity.Transaction.Type.DEPOSIT;
 import static com.demo.bankingapi.entity.Transaction.Type.TRANSFER;
 import static java.lang.String.format;
 
@@ -40,7 +41,21 @@ public class TransactionService {
     }
 
     @Transactional
-    public void createTransactions(Account from, Account to, BigDecimal amount, Currency currency) {
+    public void createDepositTransactions(Account account, BigDecimal amount, Currency currency) {
+        Transaction transaction = Transaction.builder()
+                .account(account)
+                .balance(amount)
+                .inAmount(amount)
+                .currency(currency)
+                .description(format("A deposit(%s%s)", currency.getSymbol(), amount))
+                .type(DEPOSIT)
+                .build();
+
+        transactionRepository.save(transaction);
+    }
+
+    @Transactional
+    public void createTransferTransactions(Account from, Account to, BigDecimal amount, Currency currency) {
 
         Transaction fromTransaction = Transaction.builder()
                 .account(from)

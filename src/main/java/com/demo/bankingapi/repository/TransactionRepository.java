@@ -6,8 +6,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
+    List<Transaction> findAllByAccount_AccountNumber(Long accountNumber);
     Page<Transaction> findAllByAccount_AccountNumberAndCreatedAtBetween(Long accountNumber, LocalDateTime from, LocalDateTime to, Pageable pageable);
 }

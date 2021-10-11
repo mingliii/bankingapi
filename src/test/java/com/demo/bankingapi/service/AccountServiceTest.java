@@ -124,7 +124,6 @@ class AccountServiceTest {
 
         // then
         verify(conversionService).convert(eq(accountResource), eq(Account.class));
-        verify(customerRepository).save(eq(customer));
         verify(accountRepository).save(eq(account));
         verify(conversionService).convert(eq(account), eq(AccountResource.class));
         assertTrue(customer.getAccounts().contains(account));
@@ -221,7 +220,7 @@ class AccountServiceTest {
         assertEquals(new BigDecimal("4.01"), from.getBalance());
         assertEquals(new BigDecimal("65.99"), to.getBalance());
 
-        verify(transactionService).createTransactions(from, to, transferResource.getAmount(), Currency.GBP);
+        verify(transactionService).createTransferTransactions(from, to, transferResource.getAmount(), Currency.GBP);
         verify(accountRepository).save(from);
         verify(accountRepository).save(to);
     }

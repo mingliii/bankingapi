@@ -69,6 +69,7 @@ public class Transaction {
     public enum Type {
        // DIRECT_DEBIT, // not support yet
        // DEBIT_CARD, // not support yet
+        DEPOSIT,
         TRANSFER;
 
         public static Type from(String value) {
