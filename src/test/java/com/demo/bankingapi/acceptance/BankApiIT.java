@@ -1,12 +1,14 @@
-package com.demo.bankingapi.controller;
+package com.demo.bankingapi.acceptance;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
-class AccountControllerIntegrationTest {
+class BankApiIT {
+
+    @Test
+    void contextLoads() {
+    }
 
     @Test
     void getAllAccounts() {
