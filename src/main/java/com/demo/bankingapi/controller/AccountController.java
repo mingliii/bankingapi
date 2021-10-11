@@ -93,7 +93,7 @@ public class AccountController {
     }
 
     @PostMapping(path = "/transfer")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @ApiOperation(value = "Transfer account money", notes = "Transfer amount from one account to another")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success"),

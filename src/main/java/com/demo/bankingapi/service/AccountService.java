@@ -78,9 +78,10 @@ public class AccountService {
             Customer customer = customerOptional.get();
             customer.addAccount(requireNonNull(account));
             accountRepository.save(account);
+            Currency currency = accountResource.getCurrency() != null ? accountResource.getCurrency(): Currency.GBP;
 
             if (account.getBalance().compareTo(BigDecimal.ZERO) > 0) {
-                transactionService.createDepositTransactions(account, accountResource.getBalance(), accountResource.getCurrency());
+                transactionService.createDepositTransactions(account, accountResource.getBalance(), currency);
             }
 
             return conversionService.convert(account, AccountResource.class);
